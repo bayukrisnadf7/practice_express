@@ -1,45 +1,40 @@
-const User = require("../models/user.model");
+const prisma = require("../config/database");
 
 class UserRepository {
 
     static async create(data) {
-        return await User.create(data);
+        return await prisma.data_user.create({
+            data,
+        });
     }
 
     static async findByEmail(email) {
-        return await User.findOne({ where: { email } });
+        return await prisma.data_user.findUnique({
+            where: { email },
+        });
     }
 
     static async findAll() {
-        return await User.findAll();
+        return await prisma.data_user.findMany();
     }
 
     static async findById(id) {
-        return await User.findByPk(id);
+        return await prisma.data_user.findUnique({
+            where: { user_id: id },
+        });
     }
 
     static async update(id, data) {
-        const user = await User.findByPk(id);
-
-        if (!user) {
-            return null;
-        }
-
-        await user.update(data);
-
-        return user;
+        return await prisma.data_user.update({
+            where: { user_id: id },
+            data,
+        });
     }
 
     static async delete(id) {
-        const user = await User.findByPk(id);
-
-        if (!user) {
-            return null;
-        }
-
-        await user.destroy();
-
-        return user;
+        return await prisma.data_user.delete({
+            where: { user_id: id },
+        });
     }
 }
 

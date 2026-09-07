@@ -1,4 +1,5 @@
 const UserRepository = require("../repositories/user.repositories.js");
+const bcrypt = require("bcrypt");
 
 class UserService {
 
@@ -11,7 +12,14 @@ class UserService {
             throw new Error("Email sudah digunakan");
         }
 
-        return await UserRepository.create(data);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        const userData = {
+            ...data,
+            password: hashedPassword,
+        }
+
+        return await UserRepository.create(userData);
     }
 
     static async findAll() {
@@ -35,7 +43,14 @@ class UserService {
             throw new Error("User tidak ditemukan");
         }
 
-        return await UserRepository.update(id, data);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        const updateData = {
+            ...data,
+            password: hashedPassword,
+        }
+
+        return await UserRepository.update(id, updateData);
     }
 
     static async delete(id) {
