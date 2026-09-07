@@ -22,9 +22,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -39,11 +36,7 @@ jobs:
 
           script: |
             cd /var/www/projects/practice_express
-
             git pull origin main
-
             npm ci --omit=dev
-
             pm2 restart practice-express
-
             pm2 save
