@@ -35,6 +35,10 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
 
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            nvm use 22
+
             cd /var/www/projects/practice_express
             git pull origin main
             npm ci --omit=dev
