@@ -22,6 +22,25 @@ class AuthController {
             );
         }
     }
+
+    static async register(req, res) {
+        try {
+            const result = await AuthService.register(req.body);
+
+            return successResponse(
+                res,
+                result,
+                "Registrasi berhasil",
+                201
+            );
+        } catch (error) {
+            return errorResponse(
+                res,
+                error.message,
+                error.message === "Email sudah digunakan" ? 400 : 500
+            );
+        }
+    }
 }
 
 module.exports = AuthController;

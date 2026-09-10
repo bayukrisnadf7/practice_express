@@ -2,25 +2,6 @@ const UserService = require("../services/user.service.js");
 const { successResponse, errorResponse } = require("../utils/response/response.js");
 
 class UserController {
-    static async create(req, res) {
-        try {
-            const user = await UserService.create(req.body);
-
-            return successResponse(
-                res,
-                user,
-                "User berhasil dibuat",
-                201
-            );
-        } catch (error) {
-            return errorResponse(
-                res,
-                error.message,
-                400
-            );
-        }
-    }
-
     static async findAll(req, res) {
         try {
             const users = await UserService.findAll();
