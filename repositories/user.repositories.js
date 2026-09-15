@@ -21,7 +21,7 @@ class UserRepository {
             skip,
             take: limit,
             orderBy: {
-                id: "asc",
+                created_at: "desc",
             }
         });
     }

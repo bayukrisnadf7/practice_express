@@ -1,11 +1,10 @@
 const UserRepository = require("../repositories/user.repositories.js");
 const bcrypt = require("bcrypt");
 const { redisClient } = require("../config/redis.js");
-const { Json } = require("sequelize/lib/utils");
 class UserService {
 
-    static async findAll() {
-        const cacheKey = "users:all";
+    static async findAll(page = 1, limit = 10) {
+        const cacheKey = `users:${page}:${limit}`;
 
         // Check redis
         const cachedUsers = await redisClient.get(cacheKey)
