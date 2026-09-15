@@ -6,7 +6,7 @@ const prisma = require("../../config/database");
 async function seedUsers() {
     const password = await bcrypt.hash("Password123!", 10);
 
-    const users = Array.from({ length: 100 }, (_, index) => ({
+    const users = Array.from({ length: 10000 }, (_, index) => ({
         nama: `User ${index + 1}`,
         email: `user${index + 1}@example.com`,
         password,
@@ -20,7 +20,7 @@ async function seedUsers() {
         skipDuplicates: true,
     });
 
-    console.log("100 dummy users berhasil dibuat");
+    console.log("10000 dummy users berhasil dibuat");
 }
 
 seedUsers()
