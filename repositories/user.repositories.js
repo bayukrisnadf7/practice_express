@@ -14,8 +14,16 @@ class UserRepository {
         });
     }
 
-    static async findAll() {
-        return await prisma.data_user.findMany();
+    static async findAll(page, limit) {
+        const skip = (page - 1) * limit;
+        
+        return await prisma.data_user.findMany({
+            skip,
+            take: limit,
+            orderBy: {
+                id: "asc",
+            }
+        });
     }
 
     static async findById(id) {

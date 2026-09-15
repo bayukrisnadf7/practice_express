@@ -20,7 +20,7 @@ class UserService {
         console.log("Cache miss")
 
         // Query Database
-        const users = await UserRepository.findAll();
+        const users = await UserRepository.findAll(page, limit);
 
         await redisClient.setEx(
             cacheKey,
@@ -43,7 +43,7 @@ class UserService {
 
     static async update(id, data) {
         const user = await UserRepository.findById(id);
-        
+
         if (!user) {
             throw new Error("User tidak ditemukan");
         }

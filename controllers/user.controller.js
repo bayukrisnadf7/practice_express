@@ -4,7 +4,10 @@ const { successResponse, errorResponse } = require("../utils/response/response.j
 class UserController {
     static async findAll(req, res) {
         try {
-            const users = await UserService.findAll();
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 10;
+            
+            const users = await UserService.findAll(page, limit);
 
             return successResponse(
                 res,
