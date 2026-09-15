@@ -1,10 +1,34 @@
 const UserRepository = require("../repositories/user.repositories.js");
 const bcrypt = require("bcrypt");
-
+const { redisClient } = require("../config/redis.js");
+const { Json } = require("sequelize/lib/utils");
 class UserService {
 
     static async findAll() {
-        return await UserRepository.findAll();
+        const cacheKey = "users:all";
+
+        // Check redis
+        const cachedUsers = await redisClient.get(cacheKey)
+
+        if(cachedUsers) {
+            console.log("Cache hit")
+
+            return JSON.parse(cachedUsers)
+        } 
+
+        // Chache miss
+        console.log("Cache miss")
+
+        // Query Database
+        const users = await UserRepository.findAll();
+
+        await redisClient.setEx(
+            cacheKey,
+            60,
+            JSON.stringify(users)
+        )
+
+        return users;
     }
 
     static async findById(id) {
@@ -19,7 +43,7 @@ class UserService {
 
     static async update(id, data) {
         const user = await UserRepository.findById(id);
-
+        
         if (!user) {
             throw new Error("User tidak ditemukan");
         }
