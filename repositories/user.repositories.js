@@ -22,6 +22,15 @@ class UserRepository {
             take: limit,
             orderBy: {
                 created_at: "desc",
+            },
+            select: {
+                user_id: true,
+                nama: true,
+                email: true,
+                no_hp: true,
+                jenis_kelamin: true,
+                role: true,
+                created_at: true,
             }
         });
     }
