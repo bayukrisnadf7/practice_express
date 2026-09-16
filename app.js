@@ -14,7 +14,11 @@ app.use(
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocument)
 );
-
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        message: "OK",
+    });
+});
 app.use(compression());
 app.use(express.json());
 
