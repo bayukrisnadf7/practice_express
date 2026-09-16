@@ -5,11 +5,16 @@ const BASE_URL = "http://localhost:3000";
 const TOKEN = __ENV.JWT_TOKEN;
 
 export const options = {
-    vus: 100,
-    duration: "60s",
+    stages: [
+        { duration: "30s", target: 100 },
+        { duration: "30s", target: 500 },
+        { duration: "30s", target: 1000 },
+        { duration: "30s", target: 0 },
+    ],
 
     thresholds: {
         http_req_failed: ["rate<0.01"],
+
         http_req_duration: [
             "p(95)<50",
             "p(99)<100",
