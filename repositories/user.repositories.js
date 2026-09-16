@@ -11,6 +11,15 @@ class UserRepository {
     static async findByEmail(email) {
         return await prisma.data_user.findUnique({
             where: { email },
+            select: {
+                user_id: true,
+                nama: true,
+                email: true,
+                no_hp: true,
+                jenis_kelamin: true,
+                role: true,
+                created_at: true,
+            }
         });
     }
 
@@ -38,6 +47,15 @@ class UserRepository {
     static async findById(id) {
         return await prisma.data_user.findUnique({
             where: { user_id: id },
+            select: {
+                user_id: true,
+                nama: true,
+                email: true,
+                no_hp: true,
+                jenis_kelamin: true,
+                role: true,
+                created_at: true,
+            }
         });
     }
 

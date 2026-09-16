@@ -6,8 +6,13 @@ class UserController {
         try {
             const page = Number(req.query.page) || 1;
             const limit = Number(req.query.limit) || 10;
-            
+            const start = performance.now();
+
             const users = await UserService.findAll(page, limit);
+
+            console.log(
+                `GET /users: ${(performance.now() - start).toFixed(2)} ms`
+            );
 
             return successResponse(
                 res,
