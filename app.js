@@ -18,7 +18,7 @@ app.use(
 app.use(compression());
 app.use(express.json());
 
-app.use("/api/users", globalLimiter, userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 
 module.exports = app;
