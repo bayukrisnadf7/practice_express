@@ -1,29 +1,34 @@
 import http from "k6/http";
-import { check, sleep } from "k6";
+import { check } from "k6";
+
+const BASE_URL = "http://localhost:3000";
+const TOKEN = __ENV.JWT_TOKEN;
 
 export const options = {
-    stages: [
-        { duration: "10s", target: 10 },
-        { duration: "20s", target: 50 },
-        { duration: "20s", target: 100 },
-        { duration: "10s", target: 0 },
-    ],
+    vus: 100,
+    duration: "60s",
 
     thresholds: {
         http_req_failed: ["rate<0.01"],
-        http_req_duration: ["p(95)<200"],
+        http_req_duration: [
+            "p(95)<50",
+            "p(99)<100",
+        ],
     },
 };
 
 export default function () {
     const response = http.get(
-        "http://localhost:3000/api/users?page=1&limit=10"
+        `${BASE_URL}/api/users?page=1&limit=10`,
+        {
+            headers: {
+                Authorization: `Bearer ${TOKEN}`,
+            },
+        }
     );
 
     check(response, {
         "status is 200": (r) => r.status === 200,
         "response has data": (r) => r.body.length > 0,
     });
-
-    sleep(1);
 }
