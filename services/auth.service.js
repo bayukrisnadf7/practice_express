@@ -30,39 +30,31 @@ class AuthService {
         };
     }
 
-    static async register(data){
+    static async register(data) {
         const existingUser = await UserRepository.findByEmail(data.email);
 
         if (existingUser) {
             throw new Error("Email sudah digunakan");
         }
-        const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        const totalStart = process.hrtime.bigint();
         const hashStart = process.hrtime.bigint();
-
+        const hashedPassword = await bcrypt.hash(data.password, 10);
         const hashEnd = process.hrtime.bigint();
-
-        const dbStart = process.hrtime.bigint();
-
-        const dbEnd = process.hrtime.bigint();
-
-        const totalEnd = process.hrtime.bigint();
-
-        const hashTime = Number(hashEnd - hashStart) / 1_000_000;
-        const dbTime = Number(dbEnd - dbStart) / 1_000_000;
-        const totalTime = Number(totalEnd - totalStart) / 1_000_000;
-
-       console.log(`Hash time: ${hashTime.toFixed(2)} ms`);
-        console.log(`DB time: ${dbTime.toFixed(2)} ms`);
-        console.log(`Total time: ${totalTime.toFixed(2)} ms`);
 
         const userData = {
             ...data,
             password: hashedPassword,
         };
 
+        const dbStart = process.hrtime.bigint();
         const user = await UserRepository.create(userData);
+        const dbEnd = process.hrtime.bigint();
+
+        const hashTime = Number(hashEnd - hashStart) / 1_000_000;
+        const dbTime = Number(dbEnd - dbStart) / 1_000_000;
+
+        console.log(`Hash time: ${hashTime.toFixed(2)} ms`);
+        console.log(`DB time: ${dbTime.toFixed(2)} ms`);
 
         const payload = {
             user_id: user.user_id,
