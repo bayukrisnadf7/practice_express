@@ -40,9 +40,9 @@ class AuthService {
         if (existingUser) {
             throw new Error("Email sudah digunakan");
         }
-        
+
         const hashStart = process.hrtime.bigint();
-        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const hashedPassword = await bcrypt.hash(data.password, 8);
         const hashEnd = process.hrtime.bigint();
 
         const userData = {
