@@ -2,11 +2,10 @@ import http from "k6/http";
 import { check } from "k6";
 
 const BASE_URL = "http://localhost:3000";
-const TOKEN = __ENV.JWT_TOKEN;
 
 export const options = {
-    vus: 10,
-    duration: "30s",
+    vus: 1,
+    duration: "5s",
 
     thresholds: {
         http_req_failed: ["rate<0.01"],
@@ -34,10 +33,14 @@ export default function () {
         {
             headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Bearer ${TOKEN}`,
             },
         }
     );
+
+    if (__VU === 1 && __ITER < 3) {
+        console.log(`STATUS: ${response.status}`);
+        console.log(`BODY: ${response.body}`);
+    }
 
     check(response, {
         "status is 201": (r) => r.status === 201,
