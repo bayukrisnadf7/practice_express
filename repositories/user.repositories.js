@@ -17,6 +17,7 @@ class UserRepository {
                 email: true,
                 no_hp: true,
                 jenis_kelamin: true,
+                password: true,
                 role: true,
                 created_at: true,
             }
