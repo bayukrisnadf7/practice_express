@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const prisma = require("../../config/database");
 
 async function seedUsers() {
-    const password = await bcrypt.hash("Password123!", 10);
+    const password = await bcrypt.hash("Password123!", 8);
 
     const users = Array.from({ length: 10000 }, (_, index) => ({
         nama: `User ${index + 1}`,
