@@ -4,17 +4,32 @@ const jwtUtil = require("../utils/jwt/jwt");
 
 class AuthService {
     static async login(email, password) {
+        const totalStart = process.hrtime.bigint();
+
+        const dbStart = process.hrtime.bigint();
+
         const user = await UserRepository.findByEmail(email);
 
+        const dbEnd = process.hrtime.bigint();
+
         if (!user) {
-            throw new Error("Email atau password salah")
+            throw new Error("Email atau password salah");
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const bcryptStart = process.hrtime.bigint();
+
+        const isPasswordValid = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        const bcryptEnd = process.hrtime.bigint();
 
         if (!isPasswordValid) {
             throw new Error("Email atau password salah");
         }
+
+        const jwtStart = process.hrtime.bigint();
 
         const payload = {
             user_id: user.user_id,
@@ -23,6 +38,27 @@ class AuthService {
         };
 
         const token = jwtUtil.generateToken(payload);
+
+        const jwtEnd = process.hrtime.bigint();
+
+        const totalEnd = process.hrtime.bigint();
+
+        const dbTime =
+            Number(dbEnd - dbStart) / 1_000_000;
+
+        const bcryptTime =
+            Number(bcryptEnd - bcryptStart) / 1_000_000;
+
+        const jwtTime =
+            Number(jwtEnd - jwtStart) / 1_000_000;
+
+        const totalTime =
+            Number(totalEnd - totalStart) / 1_000_000;
+
+        console.log(`DB time: ${dbTime.toFixed(2)} ms`);
+        console.log(`Bcrypt time: ${bcryptTime.toFixed(2)} ms`);
+        console.log(`JWT time: ${jwtTime.toFixed(2)} ms`);
+        console.log(`Total time: ${totalTime.toFixed(2)} ms`);
 
         return {
             user: payload,
