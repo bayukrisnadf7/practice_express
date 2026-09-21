@@ -31,12 +31,16 @@ class AuthService {
     }
 
     static async register(data) {
+        const checkEmail = process.hrtime.bigint();
         const existingUser = await UserRepository.findByEmail(data.email);
+        const checkEmailEnd = process.hrtime.bigint();
+        const emailTime = Number(checkEmailEnd - checkEmail) / 1_000_000;
+        console.log(`Check email time: ${emailTime.toFixed(2)} ms`);
 
         if (existingUser) {
             throw new Error("Email sudah digunakan");
         }
-
+        
         const hashStart = process.hrtime.bigint();
         const hashedPassword = await bcrypt.hash(data.password, 10);
         const hashEnd = process.hrtime.bigint();
