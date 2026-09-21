@@ -6,9 +6,11 @@ const { globalLimiter } = require("./middleware/ratelimits/ratelimit.middleware"
 
 const userRoutes = require("./routes/user.route");
 const authRoutes = require("./routes/auth.route");
+const requestLogger = require("./middleware/loggers/requestLogger");
 
 const app = express();
 
+app.use(requestLogger);
 app.use(
     "/api-docs",
     swaggerUi.serve,
