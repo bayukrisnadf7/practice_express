@@ -29,12 +29,12 @@ export default function () {
     });
 
     const response = http.post(
-        `${BASE_URL}/api/users`,
+        `${BASE_URL}/api/auth/register`,
         payload,
         {
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${TOKEN}`,
+                // Authorization: `Bearer ${TOKEN}`,
             },
         }
     );
