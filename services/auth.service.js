@@ -38,6 +38,19 @@ class AuthService {
         }
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
+        const totalStart = performance.now();
+        const hashStart = performance.now();
+        const hashTime = performance.now() - hashStart;
+
+        const dbStart = performance.now();
+        const dbTime = performance.now() - dbStart;
+
+        const totalTime = performance.now() - totalStart;
+
+        console.log("Hash time: ", hashTime);
+        console.log("DB time: ", dbTime);
+        console.log("Total time: ", totalTime);
+
         const userData = {
             ...data,
             password: hashedPassword,

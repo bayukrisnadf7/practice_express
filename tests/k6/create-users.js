@@ -4,8 +4,14 @@ import { check } from "k6";
 const BASE_URL = "http://localhost:3000";
 
 export const options = {
-    vus: 1,
-    duration: "5s",
+    stages: [
+        { duration: "10s", target: 1 },
+        { duration: "10s", target: 5 },
+        { duration: "10s", target: 10 },
+        { duration: "10s", target: 25 },
+        { duration: "10s", target: 50 },
+        { duration: "10s", target: 0 },
+    ],
 
     thresholds: {
         http_req_failed: ["rate<0.01"],
