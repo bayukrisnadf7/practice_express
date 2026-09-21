@@ -38,18 +38,24 @@ class AuthService {
         }
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
-        const totalStart = performance.now();
-        const hashStart = performance.now();
-        const hashTime = performance.now() - hashStart;
+        const totalStart = process.hrtime.bigint();
+        const hashStart = process.hrtime.bigint();
 
-        const dbStart = performance.now();
-        const dbTime = performance.now() - dbStart;
+        const hashEnd = process.hrtime.bigint();
 
-        const totalTime = performance.now() - totalStart;
+        const dbStart = process.hrtime.bigint();
 
-        console.log("Hash time: ", hashTime);
-        console.log("DB time: ", dbTime);
-        console.log("Total time: ", totalTime);
+        const dbEnd = process.hrtime.bigint();
+
+        const totalEnd = process.hrtime.bigint();
+
+        const hashTime = Number(hashEnd - hashStart) / 1_000_000;
+        const dbTime = Number(dbEnd - dbStart) / 1_000_000;
+        const totalTime = Number(totalEnd - totalStart) / 1_000_000;
+
+       console.log(`Hash time: ${hashTime.toFixed(2)} ms`);
+        console.log(`DB time: ${dbTime.toFixed(2)} ms`);
+        console.log(`Total time: ${totalTime.toFixed(2)} ms`);
 
         const userData = {
             ...data,
