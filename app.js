@@ -7,6 +7,10 @@ const { globalLimiter } = require("./middleware/ratelimit.middleware");
 const userRoutes = require("./routes/user.route");
 const authRoutes = require("./routes/auth.route");
 const vehicleRoutes = require("./routes/vehicle.route");
+const routeRoutes = require("./routes/route.route");
+const scheduleRoutes = require("./routes/schedule.route");
+const bookingRoutes = require("./routes/booking.route");
+const paymentRoutes = require("./routes/payment.route");
 const requestLogger = require("./middleware/requestLogger.middleware");
 
 const app = express();
@@ -28,5 +32,9 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/routes", routeRoutes);
+app.use("/api/schedules", scheduleRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments", paymentRoutes);
 
 module.exports = app;

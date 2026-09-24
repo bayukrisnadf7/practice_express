@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Practice Express API
-  description: REST API documentation for Practice Express
+  description: REST API documentation for Practice Express - Transportation & Booking System
   version: 1.0.0
 
 servers:
@@ -10,10 +10,22 @@ servers:
     description: Local development
 
 tags:
+  - name: Health
+    description: Health check endpoints
   - name: Auth
     description: Authentication endpoints
   - name: Users
     description: User management endpoints
+  - name: Vehicles
+    description: Vehicle management endpoints
+  - name: Routes
+    description: Route management endpoints
+  - name: Schedules
+    description: Travel schedule management endpoints
+  - name: Bookings
+    description: Ticket booking endpoints
+  - name: Payments
+    description: Payment transaction endpoints
 
 components:
   securitySchemes:
@@ -23,33 +35,58 @@ components:
       bearerFormat: JWT
 
   schemas:
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Operation completed successfully
+        data:
+          type: object
+
+    ApiErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Error description message
+
+    # User Schemas
     User:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
-
+        user_id:
+          type: string
+          format: uuid
+          example: 878e1b64-8ee1-4775-8167-ee039c3623f9
         nama:
           type: string
           example: Bayu Krisna
-
         email:
           type: string
           format: email
           example: bayu@example.com
-
         no_hp:
           type: string
           example: "081234567890"
-
         jenis_kelamin:
           type: string
-          example: L
-
+          example: laki-laki
         role:
           type: string
-          example: user
+          example: users
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     CreateUser:
       type: object
@@ -57,33 +94,30 @@ components:
         - nama
         - email
         - password
-
+        - no_hp
+        - jenis_kelamin
+        - role
       properties:
         nama:
           type: string
           example: Bayu Krisna
-
         email:
           type: string
           format: email
           example: bayu@example.com
-
         password:
           type: string
           format: password
           example: password123
-
         no_hp:
           type: string
           example: "081234567890"
-
         jenis_kelamin:
           type: string
-          example: L
-
+          example: laki-laki
         role:
           type: string
-          example: user
+          example: users
 
     LoginUser:
       type: object
@@ -100,26 +134,306 @@ components:
           format: password
           example: password123
 
+    # Vehicle Schemas
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 9a2074f7-3315-4ba2-b2a3-231362e84c8a
+        plate_number:
+          type: string
+          example: B 1234 CD
+        type:
+          type: string
+          example: Bus Eksekutif
+        capacity:
+          type: integer
+          example: 30
+
+    CreateVehicle:
+      type: object
+      required:
+        - plate_number
+        - type
+        - capacity
+      properties:
+        plate_number:
+          type: string
+          example: B 1234 CD
+        type:
+          type: string
+          example: Bus Eksekutif
+        capacity:
+          type: integer
+          example: 30
+
+    # Route Schemas
+    Route:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c1a1e0fb-953b-4886-9a25-9610fba0bc70
+        origin:
+          type: string
+          example: Jakarta
+        destination:
+          type: string
+          example: Bandung
+        distance:
+          type: number
+          format: float
+          example: 150.5
+
+    CreateRoute:
+      type: object
+      required:
+        - origin
+        - destination
+        - distance
+      properties:
+        origin:
+          type: string
+          example: Jakarta
+        destination:
+          type: string
+          example: Bandung
+        distance:
+          type: number
+          format: float
+          example: 150.5
+
+    UpdateRoute:
+      type: object
+      properties:
+        origin:
+          type: string
+          example: Jakarta
+        destination:
+          type: string
+          example: Bandung
+        distance:
+          type: number
+          format: float
+          example: 155.0
+
+    # Schedule Schemas
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: e15f8cc0-bf21-4fa3-b68a-6b8c8d0b5033
+        route_id:
+          type: string
+          format: uuid
+        vehicle_id:
+          type: string
+          format: uuid
+        departure_at:
+          type: string
+          format: date-time
+          example: "2026-10-01T08:00:00.000Z"
+        arrival_at:
+          type: string
+          format: date-time
+          example: "2026-10-01T12:00:00.000Z"
+        status:
+          type: string
+          example: active
+        route:
+          $ref: "#/components/schemas/Route"
+        vehicle:
+          $ref: "#/components/schemas/Vehicle"
+
+    CreateSchedule:
+      type: object
+      required:
+        - route_id
+        - vehicle_id
+        - departure_at
+        - arrival_at
+      properties:
+        route_id:
+          type: string
+          format: uuid
+          example: c1a1e0fb-953b-4886-9a25-9610fba0bc70
+        vehicle_id:
+          type: string
+          format: uuid
+          example: 9a2074f7-3315-4ba2-b2a3-231362e84c8a
+        departure_at:
+          type: string
+          format: date-time
+          example: "2026-10-01T08:00:00.000Z"
+        arrival_at:
+          type: string
+          format: date-time
+          example: "2026-10-01T12:00:00.000Z"
+        status:
+          type: string
+          enum: [active, inactive, cancelled, completed]
+          example: active
+
+    UpdateSchedule:
+      type: object
+      properties:
+        route_id:
+          type: string
+          format: uuid
+        vehicle_id:
+          type: string
+          format: uuid
+        departure_at:
+          type: string
+          format: date-time
+        arrival_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, inactive, cancelled, completed]
+
+    # Booking Schemas
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 4a2d8a4f-56f8-47bc-9494-b250529d8912
+        user_id:
+          type: string
+          format: uuid
+        schedule_id:
+          type: string
+          format: uuid
+        seat_number:
+          type: integer
+          example: 12
+        booking_status:
+          type: string
+          example: booked
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        schedule:
+          $ref: "#/components/schemas/Schedule"
+        user:
+          $ref: "#/components/schemas/User"
+
+    CreateBooking:
+      type: object
+      required:
+        - schedule_id
+        - seat_number
+      properties:
+        schedule_id:
+          type: string
+          format: uuid
+          example: e15f8cc0-bf21-4fa3-b68a-6b8c8d0b5033
+        seat_number:
+          type: integer
+          example: 12
+        user_id:
+          type: string
+          format: uuid
+          description: Optional. Only used by admin to book for another user.
+        booking_status:
+          type: string
+          enum: [booked, paid, cancelled, completed]
+          default: booked
+
+    UpdateBooking:
+      type: object
+      properties:
+        seat_number:
+          type: integer
+          example: 14
+        booking_status:
+          type: string
+          enum: [booked, paid, cancelled, completed]
+
+    # Payment Schemas
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: a3b76cf3-5755-46eb-a430-bfcf2c78f106
+        booking_id:
+          type: string
+          format: uuid
+        payment_method:
+          type: string
+          example: transfer_bank
+        amount:
+          type: number
+          format: float
+          example: 150000
+        transaction_id:
+          type: string
+          example: TRX-1727160000-A1B2
+        payment_date:
+          type: string
+          format: date-time
+        booking:
+          $ref: "#/components/schemas/Booking"
+
+    CreatePayment:
+      type: object
+      required:
+        - booking_id
+        - payment_method
+        - amount
+      properties:
+        booking_id:
+          type: string
+          format: uuid
+          example: 4a2d8a4f-56f8-47bc-9494-b250529d8912
+        payment_method:
+          type: string
+          example: transfer_bank
+          description: transfer_bank, e_wallet, credit_card, cash
+        amount:
+          type: number
+          format: float
+          example: 150000
+        transaction_id:
+          type: string
+          description: Optional. Generated automatically if omitted.
+          example: TRX-1727160000-A1B2
+
 paths:
-  /: 
+  /health:
     get:
       tags:
         - Health
-      summary: Health check
+      summary: Health check endpoint
       responses:
         "200":
-          description: API is running
+          description: Service is healthy
           content:
             application/json:
               schema:
                 type: object
                 example:
-                  message: "Practice Express API is running"
+                  message: OK
+
+  # Auth Endpoints
   /api/auth/login:
     post:
       tags:
         - Auth
-      summary: Login a user
+      summary: Login user
       security: []
       requestBody:
         required: true
@@ -129,7 +443,7 @@ paths:
               $ref: "#/components/schemas/LoginUser"
       responses:
         "200":
-          description: Login successfully
+          description: Login successful
           content:
             application/json:
               schema:
@@ -148,24 +462,14 @@ paths:
                     type: object
                     properties:
                       user:
-                        type: object
-                        properties:
-                          user_id:
-                            type: integer
-                            example: 1
-                          email:
-                            type: string
-                            example: bayu@example.com
-                          role:
-                            type: string
-                            example: user
+                        $ref: "#/components/schemas/User"
                       token:
                         type: string
                         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         "400":
           description: Validation error
         "401":
-          description: Email atau password salah
+          description: Invalid credentials
         "500":
           description: Internal server error
 
@@ -173,7 +477,7 @@ paths:
     post:
       tags:
         - Auth
-      summary: Register a new user
+      summary: Register new user
       security: []
       requestBody:
         required: true
@@ -183,16 +487,22 @@ paths:
               $ref: "#/components/schemas/CreateUser"
       responses:
         "201":
-          description: User successfully registered
+          description: User registered successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  token:
+                    type: string
         "400":
-          description: Validation error
+          description: Validation error or email already used
         "500":
           description: Internal server error
 
+  # Users Endpoints
   /api/users:
     get:
       tags:
@@ -200,6 +510,17 @@ paths:
       summary: Get all users
       security:
         - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
       responses:
         "200":
           description: Successfully get all users
@@ -209,36 +530,32 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
         "500":
           description: Internal server error
 
     post:
       tags:
         - Users
-      summary: Create a new user
+      summary: Create new user
       security:
         - bearerAuth: []
-
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateUser"
-
       responses:
         "201":
           description: User successfully created
-
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-
         "400":
           description: Validation error
-
         "500":
           description: Internal server error
 
@@ -254,8 +571,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-          example: 1
+            type: string
+            format: uuid
       responses:
         "200":
           description: Successfully get user
@@ -277,8 +594,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-          example: 1
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
@@ -303,15 +620,655 @@ paths:
         - name: id
           in: path
           required: true
-
           schema:
-            type: integer
-
-          example: 1
-
+            type: string
+            format: uuid
       responses:
         "200":
           description: User successfully deleted
-
         "404":
           description: User not found
+
+  # Vehicles Endpoints
+  /api/vehicles:
+    get:
+      tags:
+        - Vehicles
+      summary: Get all vehicles (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Successfully get vehicles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden (Admin only)
+
+    post:
+      tags:
+        - Vehicles
+      summary: Add new vehicle (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVehicle"
+      responses:
+        "200":
+          description: Vehicle created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden (Admin only)
+
+  /api/vehicles/{plate_number}:
+    get:
+      tags:
+        - Vehicles
+      summary: Get vehicle by plate number (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: plate_number
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "B 1234 CD"
+      responses:
+        "200":
+          description: Vehicle found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: Vehicle not found
+
+  /api/vehicles/{id}:
+    put:
+      tags:
+        - Vehicles
+      summary: Update vehicle by ID (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVehicle"
+      responses:
+        "200":
+          description: Vehicle updated successfully
+        "404":
+          description: Vehicle not found
+
+    delete:
+      tags:
+        - Vehicles
+      summary: Delete vehicle by ID (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Vehicle deleted successfully
+        "404":
+          description: Vehicle not found
+
+  # Routes Endpoints
+  /api/routes:
+    get:
+      tags:
+        - Routes
+      summary: Get all routes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully get routes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+    post:
+      tags:
+        - Routes
+      summary: Create new route (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoute"
+      responses:
+        "201":
+          description: Route created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Validation error or route already exists
+        "403":
+          description: Forbidden (Admin only)
+
+  /api/routes/{id}:
+    get:
+      tags:
+        - Routes
+      summary: Get route by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Route found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: Route not found
+
+    put:
+      tags:
+        - Routes
+      summary: Update route (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoute"
+      responses:
+        "200":
+          description: Route updated successfully
+        "400":
+          description: Validation error
+        "404":
+          description: Route not found
+
+    delete:
+      tags:
+        - Routes
+      summary: Delete route (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Route deleted successfully
+        "404":
+          description: Route not found
+
+  # Schedules Endpoints
+  /api/schedules:
+    get:
+      tags:
+        - Schedules
+      summary: Get all schedules
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, cancelled, completed]
+        - name: route_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: vehicle_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successfully get schedules
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+    post:
+      tags:
+        - Schedules
+      summary: Create new schedule (Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSchedule"
+      responses:
+        "201":
+          description: Schedule created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Validation error (e.g. arrival before departure)
+        "404":
+          description: Route or vehicle not found
+        "403":
+          description: Forbidden (Admin only)
+
+  /api/schedules/{id}:
+    get:
+      tags:
+        - Schedules
+      summary: Get schedule by ID (includes route, vehicle, and booked seats)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Schedule found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: Schedule not found
+
+    put:
+      tags:
+        - Schedules
+      summary: Update schedule (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSchedule"
+      responses:
+        "200":
+          description: Schedule updated successfully
+        "404":
+          description: Schedule not found
+
+    delete:
+      tags:
+        - Schedules
+      summary: Delete schedule (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Schedule deleted successfully
+        "404":
+          description: Schedule not found
+
+  # Bookings Endpoints
+  /api/bookings:
+    get:
+      tags:
+        - Bookings
+      summary: Get all bookings (User gets their own, Admin gets all)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: schedule_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: booking_status
+          in: query
+          schema:
+            type: string
+            enum: [booked, paid, cancelled, completed]
+        - name: user_id
+          in: query
+          description: Filter by user ID (Admin only)
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successfully get bookings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+
+    post:
+      tags:
+        - Bookings
+      summary: Create new booking
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBooking"
+      responses:
+        "201":
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Seat already booked or exceeds vehicle capacity
+        "404":
+          description: Schedule not found
+
+  /api/bookings/{id}:
+    get:
+      tags:
+        - Bookings
+      summary: Get booking by ID (Owner or Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Booking found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "403":
+          description: Forbidden (Not booking owner)
+        "404":
+          description: Booking not found
+
+    put:
+      tags:
+        - Bookings
+      summary: Update booking seat or status (Owner or Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBooking"
+      responses:
+        "200":
+          description: Booking updated successfully
+        "400":
+          description: Seat already booked or exceeds vehicle capacity
+        "404":
+          description: Booking not found
+
+    delete:
+      tags:
+        - Bookings
+      summary: Delete booking permanently (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Booking deleted successfully
+        "404":
+          description: Booking not found
+
+  /api/bookings/{id}/cancel:
+    patch:
+      tags:
+        - Bookings
+      summary: Cancel a booking (Owner or Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Booking cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Booking already cancelled
+        "404":
+          description: Booking not found
+
+  # Payments Endpoints
+  /api/payments:
+    get:
+      tags:
+        - Payments
+      summary: Get all payment transactions (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully get payments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "403":
+          description: Forbidden (Admin only)
+
+    post:
+      tags:
+        - Payments
+      summary: Process payment for a booking
+      description: Creates a payment record and automatically updates booking_status to 'paid'.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePayment"
+      responses:
+        "201":
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Booking already paid or cancelled
+        "404":
+          description: Booking not found
+
+  /api/payments/{id}:
+    get:
+      tags:
+        - Payments
+      summary: Get payment by ID (Owner or Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Payment found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "403":
+          description: Forbidden
+        "404":
+          description: Payment not found
+
+  /api/payments/booking/{booking_id}:
+    get:
+      tags:
+        - Payments
+      summary: Get payments for a specific booking (Owner or Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successfully get payments for booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: Booking not found

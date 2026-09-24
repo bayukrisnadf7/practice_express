@@ -12,7 +12,7 @@ datasource db {
 model data_user {
   user_id       String         @id @default(uuid())
   nama          String
-  email         String         @unique
+  email         String         @unique 
   password      String
   no_hp         String?
   jenis_kelamin String
