@@ -1,6 +1,7 @@
 const UserRepository = require("../repositories/user.repositories.js");
 const bcrypt = require("bcrypt");
 const { redisClient } = require("../config/redis.js");
+
 class UserService {
 
     static async findAll(page = 1, limit = 10) {

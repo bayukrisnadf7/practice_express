@@ -2,11 +2,12 @@ const express = require("express");
 const compression = require("compression");
 
 const { swaggerUi, swaggerDocument } = require("./swagger/swagger");
-const { globalLimiter } = require("./middleware/ratelimits/ratelimit.middleware");
+const { globalLimiter } = require("./middleware/ratelimit.middleware");
 
 const userRoutes = require("./routes/user.route");
 const authRoutes = require("./routes/auth.route");
-const requestLogger = require("./middleware/loggers/requestLogger");
+const vehicleRoutes = require("./routes/vehicle.route");
+const requestLogger = require("./middleware/requestLogger.middleware");
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 
 module.exports = app;

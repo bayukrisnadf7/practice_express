@@ -16,6 +16,7 @@ class UserRepository {
                 nama: true,
                 email: true,
                 password: true,
+                role: true,
             }
         });
     }

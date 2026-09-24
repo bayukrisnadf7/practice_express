@@ -10,13 +10,68 @@ datasource db {
 }
 
 model data_user {
-  user_id       String    @id @default(uuid())
+  user_id       String         @id @default(uuid())
   nama          String
-  email         String    @unique
+  email         String         @unique
   password      String
   no_hp         String?
   jenis_kelamin String
-  role          String    @default("users")
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
+  role          String         @default("users")
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  dataBookings  data_booking[]
+}
+
+model data_vehicles {
+  id            String          @id @default(uuid())
+  plate_number  String
+  type          String
+  capacity      Int
+  dataSchedules data_schedule[]
+}
+
+model data_routes {
+  id            String          @id @default(uuid())
+  origin        String
+  destination   String
+  distance      Float
+  dataSchedules data_schedule[]
+}
+
+model data_schedule {
+  id           String   @id @default(uuid())
+  route_id     String
+  vehicle_id   String
+  departure_at DateTime
+  arrival_at   DateTime
+  status       String   @default("active")
+
+  route        data_routes    @relation(fields: [route_id], references: [id])
+  vehicle      data_vehicles  @relation(fields: [vehicle_id], references: [id])
+  dataBookings data_booking[]
+}
+
+model data_booking {
+  id             String   @id @default(uuid())
+  user_id        String
+  schedule_id    String
+  seat_number    Int
+  booking_status String   @default("booked")
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  user         data_user      @relation(fields: [user_id], references: [user_id])
+  schedule     data_schedule  @relation(fields: [schedule_id], references: [id])
+  dataPayments data_payment[]
+}
+
+model data_payment {
+  id             String   @id @default(uuid())
+  booking_id     String
+  payment_method String
+  amount         Float
+  transaction_id String
+  payment_date   DateTime @default(now())
+
+  booking data_booking @relation(fields: [booking_id], references: [id])
 }
