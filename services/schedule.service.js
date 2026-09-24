@@ -1,6 +1,7 @@
 const ScheduleRepository = require("../repositories/schedule.repositories");
 const RouteRepository = require("../repositories/route.repositories");
 const VehicleRepository = require("../repositories/vehicle.repositories");
+const { redisClient } = require("../config/redis");
 
 class ScheduleService {
     static async create(data) {
@@ -29,7 +30,19 @@ class ScheduleService {
     }
 
     static async findAll(page, limit, filter) {
-        return await ScheduleRepository.findAll(page, limit, filter);
+        const cacheKey = `schedules:${page}:${limit}:${JSON.stringify(filter)}`;
+        const cachedSchedule = await redisClient.get(cacheKey);
+
+        if(cachedSchedule) {
+            console.log("Cache hit");
+            return JSON.parse(cachedSchedule);
+        }
+
+        console.log("Cache miss");
+        const schedule = await ScheduleRepository.findAll(page, limit, filter);
+
+        await redisClient.setEx(cacheKey, 60, JSON.stringify(schedule));
+        return schedule;
     }
 
     static async findById(id) {
