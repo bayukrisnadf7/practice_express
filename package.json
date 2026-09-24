@@ -2,7 +2,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "seed:users": "node prisma/seed/user.seed.js"
+    "seed": "node prisma/seed/seed.js",
+    "seed:users": "node prisma/seed/user.seed.js.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
