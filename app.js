@@ -3,6 +3,7 @@ const compression = require("compression");
 
 const { swaggerUi, swaggerDocument } = require("./swagger/swagger");
 const { globalLimiter } = require("./middleware/ratelimit.middleware");
+const cors = require("cors");
 
 const userRoutes = require("./routes/user.route");
 const authRoutes = require("./routes/auth.route");
@@ -16,6 +17,7 @@ const requestLogger = require("./middleware/requestLogger.middleware");
 const app = express();
 
 app.use(requestLogger);
+app.use(cors())
 app.use(
     "/api-docs",
     swaggerUi.serve,
