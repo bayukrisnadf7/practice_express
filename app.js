@@ -13,10 +13,12 @@ const scheduleRoutes = require("./routes/schedule.route");
 const bookingRoutes = require("./routes/booking.route");
 const paymentRoutes = require("./routes/payment.route");
 const requestLogger = require("./middleware/requestLogger.middleware");
+const metricsMiddleware = require("./middleware/metrics.middleware");
 
 const app = express();
 
 app.use(requestLogger);
+app.use(metricsMiddleware);
 app.use(cors())
 app.use(
     "/api-docs",
@@ -27,6 +29,11 @@ app.get("/health", (req, res) => {
     res.status(200).json({
         message: "OK",
     });
+});
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", client.register.contentType);
+
+  res.end(await client.register.metrics());
 });
 app.use(compression());
 app.use(express.json());
