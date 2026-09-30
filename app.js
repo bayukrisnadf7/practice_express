@@ -15,6 +15,7 @@ const bookingRoutes = require("./routes/booking.route");
 const paymentRoutes = require("./routes/payment.route");
 const requestLogger = require("./middleware/requestLogger.middleware");
 const metricsMiddleware = require("./middleware/metrics.middleware");
+const errorHandler = require("./middleware/errorHandler.middleware");
 
 const app = express();
 

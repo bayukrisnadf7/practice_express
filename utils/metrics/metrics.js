@@ -1,6 +1,6 @@
 const client = require("prom-client");
 
-// Default Node.js metrics
+// Default Node.js system metrics (CPU, Memory, Event Loop, GC)
 client.collectDefaultMetrics({
   prefix: "express_app_",
 });
@@ -18,8 +18,21 @@ const httpRequestsTotal = new client.Counter({
   labelNames: ["method", "route", "status_code"],
 });
 
+const httpErrorsTotal = new client.Counter({
+  name: "http_errors_total",
+  help: "Total number of HTTP errors (4xx and 5xx)",
+  labelNames: ["method", "route", "status_code"],
+});
+
+const activeRequestsGauge = new client.Gauge({
+  name: "http_active_requests",
+  help: "Number of currently active HTTP requests",
+});
+
 module.exports = {
   client,
   httpRequestDuration,
   httpRequestsTotal,
+  httpErrorsTotal,
+  activeRequestsGauge,
 };
